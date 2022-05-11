@@ -17,12 +17,9 @@ jobs:
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
-      run: |
-        cat <<-EOF > ./sensitive.auto.tfvars
-        tfc_token = "${{ secrets.TOKEN_TFC }}"
-        github_token = "${{ secrets.TOKEN_GITHUB }}"
-        EOF
-      shell: bash
+      run:
+        shell: bash
+
 
     steps:
       # Checkout the repository to the GitHub Actions runner
@@ -32,6 +29,11 @@ jobs:
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@main
+        run: |
+          cat <<-EOF > ./sensitive.auto.tfvars
+          tfc_token = "${{ secrets.TOKEN_TFC }}"
+          github_token = "${{ secrets.TOKEN_GITHUB }}"
+          EOF
         with:
           terraform_wrapper: false
           cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
