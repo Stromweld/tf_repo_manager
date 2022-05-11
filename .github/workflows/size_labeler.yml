@@ -1,3 +1,4 @@
+---
 name: size_labeler
 
 on: [pull_request]
