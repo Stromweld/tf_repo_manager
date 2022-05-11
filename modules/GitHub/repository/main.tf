@@ -103,7 +103,7 @@ resource "github_branch_protection" "default" {
       compact(
         concat(
           [
-            "linting / linters",
+            "linting / Lint Code Base",
           ],
           var.cookbook ? [
             "lint / cookstyle",
