@@ -103,8 +103,7 @@ resource "github_branch_protection" "default" {
       compact(
         concat(
           [
-            "lint / mdl",
-            "lint / yamllint"
+            "linting / linters",
           ],
           var.cookbook ? [
             "lint / cookstyle",
@@ -113,8 +112,7 @@ resource "github_branch_protection" "default" {
             "Release Label Validator"
           ] : [],
           var.terraform || var.tf_module ? [
-            "terraform-lint",
-            "Terraform Cloud/sous-chefs/${var.name}"
+            "terraform / terraform"
           ] : []
         )
       )

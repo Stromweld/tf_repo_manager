@@ -4,7 +4,7 @@
 ## Super Linter GitHub Actions ##
 #################################
 #################################
-name: Lint Code Base
+name: linting
 
 #
 # Documentation:
@@ -25,7 +25,7 @@ on:
 # Set the Job #
 ###############
 jobs:
-  build:
+  linters:
     # Name the Job
     name: Lint Code Base
     # Set the agent to run on

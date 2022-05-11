@@ -1,5 +1,5 @@
 ---
-name: 'Terraform'
+name: terraform
 
 on:
   push:
