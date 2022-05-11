@@ -2,7 +2,7 @@
 
 Terraform module for GitHub Repositories
 
-## References:
+## References
 
 <https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository>
 <https://registry.terraform.io/providers/integrations/github/latest/docs/resources/branch>
