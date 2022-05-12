@@ -37,14 +37,18 @@ jobs:
       - name: Terraform Init
         run: |
           cat <<-EOF > ./sensitive.auto.tfvars
-          tfc_token = "${{ secrets.TOKEN_TFC }}"
+          tfc_token    = "${{ secrets.TOKEN_TFC }}"
           github_token = "${{ secrets.TOKEN_GITHUB }}"
           EOF
           terraform init
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
-        run: terraform fmt -check -recursive
+        run: |
+          if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
+          echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
+          exit 1;
+          fi
 
       # Terraform Lint
       - name: Terraform Lint
