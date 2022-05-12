@@ -63,7 +63,7 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform plan | tee terraform.txt
-          plan=`(grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1)`
+          plan=$((grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1))
           create=$(echo $plan | cut -d ' ' -f2)
           update=$(echo $plan | cut -d ' ' -f5)
           delete=$(echo $plan | cut -d ' ' -f8)

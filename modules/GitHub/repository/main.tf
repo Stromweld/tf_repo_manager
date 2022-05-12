@@ -99,24 +99,24 @@ resource "github_branch_protection" "default" {
   require_conversation_resolution = true                           # (Optional) Boolean, setting this to true requires all conversations on code must be resolved before a pull request can be merged.
   required_status_checks {                                         # (Optional) Enforce restrictions for required status checks. See Required Status Checks below for details.
     strict = true                                                  # (Optional) Require branches to be up to date before merging. Defaults to false.
-    contexts = distinct(                                           # (Optional) The list of status checks to require in order to merge into this branch. No status checks are required by default.
-      compact(
-        concat(
-          [
-            "linting / Lint Code Base (pull_request)",
-          ],
-          var.cookbook ? [
-            "lint / cookstyle",
-            "Changelog Validator",
-            "Metadata Version Validator",
-            "Release Label Validator"
-          ] : [],
-          var.terraform || var.tf_module ? [
-            "terraform / terraform (pull_request)"
-          ] : []
-        )
-      )
-    )
+    #    contexts = distinct(                                           # (Optional) The list of status checks to require in order to merge into this branch. No status checks are required by default.
+    #      compact(
+    #        concat(
+    #          [
+    #            "linting / Lint Code Base (pull_request)",
+    #          ],
+    #          var.cookbook ? [
+    #            "lint / cookstyle",
+    #            "Changelog Validator",
+    #            "Metadata Version Validator",
+    #            "Release Label Validator"
+    #          ] : [],
+    #          var.terraform || var.tf_module ? [
+    #            "terraform / terraform (pull_request)"
+    #          ] : []
+    #        )
+    #      )
+    #    )
   }
   required_pull_request_reviews {           # (Optional) Enforce restrictions for pull request reviews. See Required Pull Request Reviews below for details.
     dismiss_stale_reviews           = true  # (Optional) Dismiss approved reviews automatically when a new commit is pushed. Defaults to false.
