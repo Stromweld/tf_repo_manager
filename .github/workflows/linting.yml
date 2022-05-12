@@ -1,48 +1,22 @@
 ---
-#################################
-#################################
-## Super Linter GitHub Actions ##
-#################################
-#################################
-name: linting
-
-#
+# Super Linter GitHub Actions
 # Documentation:
 # https://docs.github.com/en/actions/learn-github-actions/workflow-syntax-for-github-actions
-#
 
-#############################
-# Start the job on all PRs #
-#############################
+name: linting
+
 on:
   pull_request:
 
-###############
-# Set the Job #
-###############
 jobs:
   linters:
-    # Name the Job
-    name: Lint Code Base
-    # Set the agent to run on
     runs-on: ubuntu-latest
-
-    ##################
-    # Load all steps #
-    ##################
     steps:
-      ##########################
-      # Checkout the code base #
-      ##########################
       - name: Checkout Code
         uses: actions/checkout@main
         with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
+          fetch-depth: 0  # Full git history is needed to get a proper list of changed files within `super-linter`
 
-      ################################
-      # Run Linter against code base #
-      ################################
       - name: Lint Code Base
         uses: github/super-linter@main
         env:
