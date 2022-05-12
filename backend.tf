@@ -7,7 +7,7 @@ terraform {
       source = "integrations/github"
     }
   }
-  cloud {
+  backend "remote" {
     organization = "Stromweld"
     workspaces {
       name = "tf-repo-manager"
