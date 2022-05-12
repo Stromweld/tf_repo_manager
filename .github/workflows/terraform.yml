@@ -3,7 +3,7 @@ name: terraform
 
 on:
   pull_request:
-    path:
+    paths:
       - '**.tf'
 
 permissions:
@@ -25,8 +25,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
-      - name: Terraform Format
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@main
+      - name: Terraform Format
         run: |
             if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
             echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
@@ -94,7 +95,7 @@ jobs:
 ---
 on:
   push:
-    path:
+    paths:
       - '**.tf'
     branches:
       - main
