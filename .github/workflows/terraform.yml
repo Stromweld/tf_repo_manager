@@ -2,38 +2,50 @@
 name: terraform
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
+  path:
+    - '**.tf'
 
 permissions:
   contents: read
 
 jobs:
-  terraform:
-    name: terraform
+  terraform-lint:
     runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Check linting of Terraform modules
+        uses: devops-infra/action-tflint@main
+        with:
+          tflint_params: "--module --deep"
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+  terraform-fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Terraform Format
+        uses: hashicorp/setup-terraform@main
+        shell: bash
+        run: |
+          if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
+          echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
+          exit 1;
+          fi
+
+  terraform-validate:
+    runs-on: ubuntu-latest
     defaults:
       run:
         shell: bash
-
-
     steps:
-      # Checkout the repository to the GitHub Actions runner
       - name: Checkout
         uses: actions/checkout@main
-
-      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@main
         with:
-          terraform_wrapper: false
           cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
-
-      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
       - name: Terraform Init
         run: |
           cat <<-EOF > ./sensitive.auto.tfvars
@@ -42,42 +54,73 @@ jobs:
           EOF
           terraform init
           terraform -version
-
-      # Checks that all Terraform configuration files adhere to a canonical format
-      - name: Terraform Format
-        run: |
-          if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
-          echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
-          exit 1;
-          fi
-
-      # Terraform Lint
-      - name: Terraform Lint
-        uses: actionshub/terraform-lint@main
-
-      # Terraform Validate
       - name: Terraform Validate
         run: terraform validate
 
-      # Generates an execution plan for Terraform
-      - name: Terraform Plan
-        run: |
-          terraform plan | tee terraform.txt
-          plan=$( (grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1) )
-          create=$(echo $plan | cut -d ' ' -f2)
-          update=$(echo $plan | cut -d ' ' -f5)
-          delete=$(echo $plan | cut -d ' ' -f8)
-          echo "{ \"create\": $create, \"update\": $update, \"delete\": $delete }" | jq > terraform.json
+  terraform-plan:
+    runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Checkout
+          uses: actions/checkout@main
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@main
+          with:
+            terraform_wrapper: false
+            cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+        - name: Terraform Init
+          run: |
+            cat <<-EOF > ./sensitive.auto.tfvars
+            tfc_token    = "${{ secrets.TOKEN_TFC }}"
+            github_token = "${{ secrets.TOKEN_GITHUB }}"
+            EOF
+            terraform init
+            terraform -version
+        - name: Terraform Plan
+          run: |
+            terraform plan | tee terraform.txt
+            plan=$( (grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1) )
+            create=$(echo $plan | cut -d ' ' -f2)
+            update=$(echo $plan | cut -d ' ' -f5)
+            delete=$(echo $plan | cut -d ' ' -f8)
+            echo "{ \"create\": $create, \"update\": $update, \"delete\": $delete }" | jq > terraform.json
+        - name: PR Comment
+          uses: ahmadnassri/action-terraform-report@master
+          with:
+            terraform-text: terraform.text
+            terraform-json: terraform.json
 
-      - name: PR Comment
-        uses: ahmadnassri/action-terraform-report@master
-        with:
-          # tell the action the plan outputs
-          terraform-text: terraform.text
-          terraform-json: terraform.json
+---
+on:
+  push:
+    path:
+      - '**.tf'
+    branches:
+      - main
 
-        # On push to main, build or change infrastructure according to Terraform configuration files
-        # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+      defaults:
+        run:
+          shell: bash
+      steps:
+        - name: Checkout
+          uses: actions/checkout@main
+        - name: Setup Terraform
+          uses: hashicorp/setup-terraform@main
+          with:
+            cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+        - name: Terraform Init
+          run: |
+            cat <<-EOF > ./sensitive.auto.tfvars
+            tfc_token    = "${{ secrets.TOKEN_TFC }}"
+            github_token = "${{ secrets.TOKEN_GITHUB }}"
+            EOF
+            terraform init
+            terraform -version
+        - name: Terraform Apply
+            if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+            run: terraform apply -auto-approve -input=false
