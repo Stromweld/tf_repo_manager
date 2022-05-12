@@ -28,15 +28,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@main
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@main
       - name: Terraform Format
-        run: |
-          if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
-          echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them:";
-          echo "$(terraform fmt -check -recursive)";
-          exit 1;
-          fi
+        uses: actionshub/terraform-lint@main
 
   terraform-validate:
     runs-on: ubuntu-latest
@@ -63,36 +56,17 @@ jobs:
 
   terraform-plan:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        shell: bash
-    steps:
-      - name: Checkout
-        uses: actions/checkout@main
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@main
-        with:
-          terraform_wrapper: false
-          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
-      - name: Terraform Init
-        run: |
-          cat <<-EOF > ./sensitive.auto.tfvars
-          tfc_token    = "${{ secrets.TOKEN_TFC }}"
-          github_token = "${{ secrets.TOKEN_GITHUB }}"
-          EOF
-          terraform init
-          terraform -version
-      - name: Terraform Plan
-        run: |
-          terraform plan | tee ${{ github.workspace }}/terraform.txt
-          plan=$( (grep 'Plan:' ${{ github.workspace }}/terraform.txt) || ( (grep -q "No changes" ${{ github.workspace }}/terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1) )
-          create=$(echo "$plan" | cut -d ' ' -f2)
-          update=$(echo "$plan" | cut -d ' ' -f5)
-          delete=$(echo "$plan" | cut -d ' ' -f8)
-          echo "{ \"create\": $create, \"update\": $update, \"delete\": $delete }" | jq > ${{ github.workspace }}/terraform.json
-      - name: PR Comment
-        uses: ahmadnassri/action-terraform-report@master
-        with:
-          terraform-text: ${{ github.workspace }}/terraform.text
-          terraform-json: ${{ github.workspace }}/terraform.json
-          github-token: ${{ secrets.TOKEN_GITHUB }}
+    env:
+      TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TOKEN_TFC }}
+      GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
+      steps:
+        - name: Checkout
+          uses: actions/checkout@main
+        - name: Terraform Plan
+          uses: dflook/terraform-plan@main
+          with:
+            variables: |
+              github_token = "${{ secrets.TOKEN_GITHUB }}"
+              tfc_token    = "${{ secrets.TOKEN_TFC }}"
+
+
