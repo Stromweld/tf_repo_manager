@@ -7,10 +7,4 @@ terraform {
       source = "integrations/github"
     }
   }
-  cloud {
-    organization = "Stromweld"
-    workspaces {
-      name = "tf-repo-manager"
-    }
-  }
 }
