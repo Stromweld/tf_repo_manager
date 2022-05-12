@@ -10,5 +10,5 @@
 
 # skip rules (list of rules to skip)
 skip-rules = [
-  "AC_GITHUB_0002"
+  "accurics.github.IAM.1"
 ]

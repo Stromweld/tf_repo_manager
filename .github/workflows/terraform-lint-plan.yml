@@ -16,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@main
       - name: Check linting of Terraform modules
-        uses: devops-infra/action-tflint@main
+        uses: devops-infra/action-tflint@master
         with:
           tflint_params: "--module --deep"
 
@@ -29,10 +29,11 @@ jobs:
         uses: hashicorp/setup-terraform@main
       - name: Terraform Format
         run: |
-            if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
-            echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
-            exit 1;
-            fi
+          if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
+          echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them:";
+          echo "$(terraform fmt -check -recursive)";
+          exit 1;
+          fi
 
   terraform-validate:
     runs-on: ubuntu-latest
@@ -91,36 +92,4 @@ jobs:
         with:
           terraform-text: terraform.text
           terraform-json: terraform.json
-
-#---
-#on:
-#  push:
-#    paths:
-#      - '**.tf'
-#    branches:
-#      - main
-#
-#jobs:
-#  terraform-apply:
-#    runs-on: ubuntu-latest
-#    defaults:
-#      run:
-#        shell: bash
-#    steps:
-#      - name: Checkout
-#        uses: actions/checkout@main
-#      - name: Setup Terraform
-#        uses: hashicorp/setup-terraform@main
-#        with:
-#          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
-#      - name: Terraform Init
-#        run: |
-#          cat <<-EOF > ./sensitive.auto.tfvars
-#          tfc_token    = "${{ secrets.TOKEN_TFC }}"
-#          github_token = "${{ secrets.TOKEN_GITHUB }}"
-#          EOF
-#          terraform init
-#          terraform -version
-#      - name: Terraform Apply
-#          if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-#          run: terraform apply -auto-approve -input=false
+          github_token: ${{ secrets.TOKEN_GITHUB }}
