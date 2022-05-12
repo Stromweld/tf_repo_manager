@@ -95,4 +95,4 @@ jobs:
         with:
           terraform-text: ${{ github.workspace }}/terraform.text
           terraform-json: ${{ github.workspace }}/terraform.json
-          github_token: ${{ secrets.TOKEN_GITHUB }}
+          github-token: ${{ secrets.TOKEN_GITHUB }}
