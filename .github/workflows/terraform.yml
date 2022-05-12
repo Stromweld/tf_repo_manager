@@ -63,7 +63,7 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform plan | tee terraform.txt
-          plan=$((grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1))
+          plan=$( (grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1) )
           create=$(echo $plan | cut -d ' ' -f2)
           update=$(echo $plan | cut -d ' ' -f5)
           delete=$(echo $plan | cut -d ' ' -f8)
@@ -73,8 +73,8 @@ jobs:
         uses: ahmadnassri/action-terraform-report@master
         with:
           # tell the action the plan outputs
-          terraform-text: ${{ github.workspace }}/terraform.text
-          terraform-json: ${{ github.workspace }}/terraform.json
+          terraform-text: terraform.text
+          terraform-json: terraform.json
 
         # On push to main, build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
