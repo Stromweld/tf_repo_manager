@@ -35,7 +35,7 @@ jobs:
           if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
           echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them:";
           echo "$(terraform fmt -check -recursive)";
-          return 1;
+          exit 1;
           fi
 
   terraform-validate:
