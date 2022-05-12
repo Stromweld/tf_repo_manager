@@ -59,38 +59,38 @@ jobs:
 
   terraform-plan:
     runs-on: ubuntu-latest
-      defaults:
-        run:
-          shell: bash
-      steps:
-        - name: Checkout
-          uses: actions/checkout@main
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@main
-          with:
-            terraform_wrapper: false
-            cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
-        - name: Terraform Init
-          run: |
-            cat <<-EOF > ./sensitive.auto.tfvars
-            tfc_token    = "${{ secrets.TOKEN_TFC }}"
-            github_token = "${{ secrets.TOKEN_GITHUB }}"
-            EOF
-            terraform init
-            terraform -version
-        - name: Terraform Plan
-          run: |
-            terraform plan | tee terraform.txt
-            plan=$( (grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1) )
-            create=$(echo $plan | cut -d ' ' -f2)
-            update=$(echo $plan | cut -d ' ' -f5)
-            delete=$(echo $plan | cut -d ' ' -f8)
-            echo "{ \"create\": $create, \"update\": $update, \"delete\": $delete }" | jq > terraform.json
-        - name: PR Comment
-          uses: ahmadnassri/action-terraform-report@master
-          with:
-            terraform-text: terraform.text
-            terraform-json: terraform.json
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@main
+        with:
+          terraform_wrapper: false
+          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+      - name: Terraform Init
+        run: |
+          cat <<-EOF > ./sensitive.auto.tfvars
+          tfc_token    = "${{ secrets.TOKEN_TFC }}"
+          github_token = "${{ secrets.TOKEN_GITHUB }}"
+          EOF
+          terraform init
+          terraform -version
+      - name: Terraform Plan
+        run: |
+          terraform plan | tee terraform.txt
+          plan=$( (grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1) )
+          create=$(echo $plan | cut -d ' ' -f2)
+          update=$(echo $plan | cut -d ' ' -f5)
+          delete=$(echo $plan | cut -d ' ' -f8)
+          echo "{ \"create\": $create, \"update\": $update, \"delete\": $delete }" | jq > terraform.json
+      - name: PR Comment
+        uses: ahmadnassri/action-terraform-report@master
+        with:
+          terraform-text: terraform.text
+          terraform-json: terraform.json
 
 ---
 on:
@@ -101,26 +101,26 @@ on:
       - main
 
 jobs:
-  terraform-plan:
+  terraform-apply:
     runs-on: ubuntu-latest
-      defaults:
-        run:
-          shell: bash
-      steps:
-        - name: Checkout
-          uses: actions/checkout@main
-        - name: Setup Terraform
-          uses: hashicorp/setup-terraform@main
-          with:
-            cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
-        - name: Terraform Init
-          run: |
-            cat <<-EOF > ./sensitive.auto.tfvars
-            tfc_token    = "${{ secrets.TOKEN_TFC }}"
-            github_token = "${{ secrets.TOKEN_GITHUB }}"
-            EOF
-            terraform init
-            terraform -version
-        - name: Terraform Apply
-            if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-            run: terraform apply -auto-approve -input=false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@main
+        with:
+          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+      - name: Terraform Init
+        run: |
+          cat <<-EOF > ./sensitive.auto.tfvars
+          tfc_token    = "${{ secrets.TOKEN_TFC }}"
+          github_token = "${{ secrets.TOKEN_GITHUB }}"
+          EOF
+          terraform init
+          terraform -version
+      - name: Terraform Apply
+          if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+          run: terraform apply -auto-approve -input=false
