@@ -61,13 +61,13 @@ jobs:
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
-        run: terraform plan -input=false -lock=false -out terraform.plan
-
-      # generate plain output
-      - run: terraform show -no-color terraform.plan > terraform.text
-
-      # generate json output
-      - run: terraform show -json terraform.plan > terraform.json
+        run: |
+          terraform plan | tee terraform.txt
+          plan=`(grep 'Plan:' terraform.txt) || ((grep -q "No changes" terraform.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1)`
+          create=$(echo $plan | cut -d ' ' -f2)
+          update=$(echo $plan | cut -d ' ' -f5)
+          delete=$(echo $plan | cut -d ' ' -f8)
+          echo "{ \"create\": $create, \"update\": $update, \"delete\": $delete }" | jq > terraform.json
 
       - name: PR Comment
         uses: ahmadnassri/action-terraform-report@master
@@ -80,4 +80,4 @@ jobs:
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform apply -auto-approve -input=false terraform.plan
+        run: terraform apply -auto-approve -input=false
