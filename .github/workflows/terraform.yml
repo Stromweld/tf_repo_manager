@@ -3,8 +3,8 @@ name: terraform
 
 on:
   pull_request:
-  path:
-    - '**.tf'
+    path:
+      - '**.tf'
 
 permissions:
   contents: read
@@ -27,12 +27,12 @@ jobs:
         uses: actions/checkout@main
       - name: Terraform Format
         uses: hashicorp/setup-terraform@main
-        shell: bash
         run: |
-          if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
-          echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
-          exit 1;
-          fi
+            if [[ -n "$(terraform fmt -check -recursive -diff)" ]]; then
+            echo "Some terraform files need to be formatted. Run 'terraform fmt -recursive' to fix them.";
+            exit 1;
+            fi
+          shell: bash
 
   terraform-validate:
     runs-on: ubuntu-latest
