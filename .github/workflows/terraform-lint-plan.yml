@@ -59,14 +59,12 @@ jobs:
     env:
       TERRAFORM_CLOUD_TOKENS: app.terraform.io=${{ secrets.TOKEN_TFC }}
       GITHUB_TOKEN: ${{ secrets.TOKEN_GITHUB }}
-      steps:
-        - name: Checkout
-          uses: actions/checkout@main
-        - name: Terraform Plan
-          uses: dflook/terraform-plan@main
-          with:
-            variables: |
-              github_token = "${{ secrets.TOKEN_GITHUB }}"
-              tfc_token    = "${{ secrets.TOKEN_TFC }}"
-
-
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Terraform Plan
+        uses: dflook/terraform-plan@main
+        with:
+          variables: |
+            github_token = "${{ secrets.TOKEN_GITHUB }}"
+            tfc_token    = "${{ secrets.TOKEN_TFC }}"
