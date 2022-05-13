@@ -5,7 +5,7 @@
   ],
   "ignore": [
     "**/__snapshots__/**",
-    "**/terraform.yml"
+    "**/terraform-lint-plan.yml"
   ],
   "absolute": true
 }
