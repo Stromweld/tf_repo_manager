@@ -36,17 +36,18 @@ jobs:
         if: steps.plan.outcome == 'success'
         run: |
           tf_plan='${{ steps.plan.outputs.stdout }}'
-          plan=`(grep 'Plan:' <<< $tf_plan) || ((grep -q "No changes" <<< $tf_plan) && echo "Plan: 0 to create, 0 to update, 0 to delete" || exit 1)`
+          plan=`(grep 'Plan:' <<< $tf_plan) || ((grep -q "No changes" <<< $tf_plan) && echo "Plan: 0 to add, 0 to change, 0 to destroy" || exit 1)`
           echo $plan
       - uses: actions/github-script@main
         if: github.event_name == 'pull_request'
         env:
           PLAN: "${{ steps.plan.outputs.stdout }}"
+          PARSE: "${{ steps.parse.outputs.stdout }}"
         with:
           github-token: ${{ secrets.TOKEN_GITHUB }}
           script: |
             const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
-            ####\`${{ steps.parse.outputs.stdout }}\`
+            ####\`${process.env.PLAN}\`
 
             <details><summary>Show Plan</summary>
 
