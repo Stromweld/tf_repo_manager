@@ -37,7 +37,7 @@ jobs:
         run: |
           tf_plan='${{ steps.plan.outputs.stdout }}'
           plan=`(grep 'Plan:' <<< $tf_plan) || ((grep -q "No changes" <<< $tf_plan) && echo "Plan: 0 to add, 0 to change, 0 to destroy" || exit 1)`
-          echo "::set-output name=stdout::$(echo $plan)
+          echo "::set-output name=stdout::$(echo $plan)"
       - uses: actions/github-script@main
         if: github.event_name == 'pull_request'
         env:
