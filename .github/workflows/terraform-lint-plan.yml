@@ -65,6 +65,7 @@ jobs:
       - name: Terraform Plan
         uses: dflook/terraform-plan@main
         with:
+          label: plan
           variables: |
             github_token = "${{ secrets.TOKEN_GITHUB }}"
             tfc_token    = "${{ secrets.TOKEN_TFC }}"
