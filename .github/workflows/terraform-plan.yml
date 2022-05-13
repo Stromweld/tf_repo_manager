@@ -31,27 +31,26 @@ jobs:
         id: plan
         if: github.event_name == 'pull_request'
         run: terraform plan -no-color -input=false
-        continue-on-error: true
       - name: Parse TF Plan
         id: parse
         if: steps.plan.outcome == 'success'
         run: |
-          echo ${{ steps.plan.outputs.stdout }} > plan.txt
+          tf_plan = '${{ steps.plan.outputs.stdout }}'
           plan=`(grep 'Plan:' plan.txt) || ((grep -q "No changes" plan.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1)`
           echo $plan
       - uses: actions/github-script@main
         if: github.event_name == 'pull_request'
         env:
-          PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+          PLAN: "${{ steps.plan.outputs.stdout }}"
         with:
           github-token: ${{ secrets.TOKEN_GITHUB }}
           script: |
-            const plan =
-            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`\n\`${{ steps.parse.outputs.stdout }}
+            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            ####\`${{ steps.parse.outputs.stdout }}\`
 
             <details><summary>Show Plan</summary>
 
-            \`\`\`\n
+            \`\`\`terraform\n
             ${process.env.PLAN}
             \`\`\`
 
@@ -65,6 +64,3 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
