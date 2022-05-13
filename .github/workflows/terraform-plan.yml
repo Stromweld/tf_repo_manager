@@ -35,8 +35,8 @@ jobs:
         id: parse
         if: steps.plan.outcome == 'success'
         run: |
-          tf_plan = '${{ steps.plan.outputs.stdout }}'
-          plan=`(grep 'Plan:' plan.txt) || ((grep -q "No changes" plan.txt) && echo "Plan 0 to create, 0 to update, 0 to delete" || exit 1)`
+          tf_plan='${{ steps.plan.outputs.stdout }}'
+          plan=`(grep 'Plan:' plan.txt) || ((grep -q "No changes" plan.txt) && echo "Plan: 0 to create, 0 to update, 0 to delete" || exit 1)`
           echo $plan
       - uses: actions/github-script@main
         if: github.event_name == 'pull_request'

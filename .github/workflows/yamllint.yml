@@ -4,6 +4,7 @@ on:
     paths:
       - '**.yml'
       - '**.yaml'
+      - '.**.yml'
 
 jobs:
   yaml-linter:
