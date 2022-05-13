@@ -1,10 +1,9 @@
 ---
-name: size_labeler
-
-on: [pull_request]
+on:
+  - pull_request
 
 jobs:
-  labeler:
+  size-labeler:
     runs-on: ubuntu-latest
     steps:
       - uses: codelytv/pr-size-labeler@main

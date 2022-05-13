@@ -3,6 +3,8 @@ on:
   push:
     paths:
       - '**.tf'
+      - '**.tfvars'
+      - '**.tfvars.json'
     branches:
       - main
 

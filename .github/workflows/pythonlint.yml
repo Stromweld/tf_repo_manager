@@ -1,0 +1,14 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.py'
+
+jobs:
+  python-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run Python Lint
+        uses: ricardochaves/python-lint@@main

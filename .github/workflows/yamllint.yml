@@ -1,0 +1,15 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.yml'
+      - '**.yaml'
+
+jobs:
+  yaml-linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run Yaml Lint
+        uses: actionshub/yamllint@main

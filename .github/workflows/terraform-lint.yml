@@ -1,10 +1,10 @@
 ---
-name: terraform
-
 on:
   pull_request:
     paths:
       - '**.tf'
+      - '**.tfvars'
+      - '**.tfvars.json'
 
 permissions:
   contents: read
