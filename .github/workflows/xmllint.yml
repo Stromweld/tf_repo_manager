@@ -5,7 +5,7 @@ on:
       - '**.xml'
 
 jobs:
-  xml-linter:
+  xml-lint:
     runs-on: ubuntu-latest
     container: alpine
     steps:

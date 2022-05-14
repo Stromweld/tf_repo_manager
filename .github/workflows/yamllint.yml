@@ -7,7 +7,7 @@ on:
       - '.**.yml'
 
 jobs:
-  yaml-linter:
+  yaml-lint:
     runs-on: ubuntu-latest
     container: ruby:alpine
     steps:

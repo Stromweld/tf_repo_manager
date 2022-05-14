@@ -105,7 +105,8 @@ resource "github_branch_protection" "default" {
           [
             "markdown-lint",
             "yaml-lint",
-            "json-lint"
+            "json-lint",
+            "*"
           ],
           var.cookbook ? [
             "cookstyle",
@@ -114,7 +115,9 @@ resource "github_branch_protection" "default" {
             "Release Label Validator"
           ] : [],
           var.terraform || var.tf_module ? [
-            "terraform-lint"
+            "terraform-lint",
+            "terraform-fmt",
+            "terraform-validate"
           ] : [],
           var.terraform ? [
             "terraform-plan"

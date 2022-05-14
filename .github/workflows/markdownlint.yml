@@ -5,7 +5,7 @@ on:
       - '**.md'
 
 jobs:
-  markdown-linter:
+  markdown-lint:
     runs-on: ubuntu-latest
     container: ruby:alpine
     steps:
