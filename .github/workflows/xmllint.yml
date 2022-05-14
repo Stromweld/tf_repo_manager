@@ -1,0 +1,17 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.xml'
+
+jobs:
+  xml-lint:
+    runs-on: ubuntu-latest
+    container: alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run XML Linter
+        run: |
+          apk add --no-cache libxml2-utils
+          find . -not -path "*/\.*" -type f -iname "*.xml" -exec xmllint \{\} \+

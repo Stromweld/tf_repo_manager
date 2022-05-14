@@ -1,0 +1,55 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+      - '**.tfvars.json'
+
+permissions:
+  contents: read
+
+jobs:
+  terraform-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Check linting of Terraform modules
+        uses: devops-infra/action-tflint@master
+        with:
+          tflint_params: "--module --deep"
+
+  terraform-fmt:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Terraform Format
+        uses: actionshub/terraform-lint@main
+
+  terraform-validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@main
+        with:
+          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+      - name: Terraform Init
+        run: |
+          cat <<-EOF > ./sensitive.auto.tfvars
+          tfc_token    = "${{ secrets.TOKEN_TFC }}"
+          github_token = "${{ secrets.TOKEN_GITHUB }}"
+          EOF
+          terraform init
+          terraform -version
+      - name: Terraform Validate
+        run: terraform validate

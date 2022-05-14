@@ -1,0 +1,34 @@
+---
+on:
+  push:
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+      - '**.tfvars.json'
+    branches:
+      - main
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@main
+        with:
+          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+      - name: Terraform Init
+        run: |
+          cat <<-EOF > ./sensitive.auto.tfvars
+          tfc_token    = "${{ secrets.TOKEN_TFC }}"
+          github_token = "${{ secrets.TOKEN_GITHUB }}"
+          EOF
+          terraform init
+          terraform -version
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve -input=false

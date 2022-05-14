@@ -1,0 +1,14 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.ps1'
+
+jobs:
+  powershell-lint:
+    runs-on: windows-latest
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@main
+        - name: Run PowerShell Linter
+          uses: microsoft/psscriptanalyzer-action@main

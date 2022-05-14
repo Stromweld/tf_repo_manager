@@ -1,0 +1,17 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.md'
+
+jobs:
+  markdown-lint:
+    runs-on: ubuntu-latest
+    container: ruby:alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run Markdown Lint
+        run: |
+          gem install mdl
+          find . -not -path "*/\.*" -type f -iname "*.md" -exec mdl \{\} \+

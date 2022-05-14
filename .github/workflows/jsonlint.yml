@@ -1,0 +1,17 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.json'
+
+jobs:
+  json-lint:
+    runs-on: ubuntu-latest
+    container: python:alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run JSON Lint
+        run: |
+          pip install --no-cache-dir demjson3
+          find . -not -path "*/\.*" -type f -iname "*.json" -exec jsonlint \{\} \+

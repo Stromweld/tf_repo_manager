@@ -1,9 +1,13 @@
 # Local .terraform directories
 **/.terraform/*
+.terraform
 
 # .tfstate files
 *.tfstate
 *.tfstate.*
+
+# Local terraform lock file
+*.terraform.lock.hcl
 
 # Crash log files
 crash.log
@@ -13,6 +17,7 @@ crash.log
 # version control.
 #
 # example.tfvars
+sensitive.auto.tfvars
 
 # Ignore override files as they are usually used to override resources locally and so
 # are not checked in
@@ -25,5 +30,51 @@ override.tf.json
 #
 # !example_override.tf
 
-# Include tfplan files to ignore the plan output of command: terraform plan -out=tfplan
-# example: *tfplan*
+# OS junk files
+[Tt]humbs.db
+*.DS_Store
+
+
+# JetBrains files
+*.idea
+.idea
+.idea/
+
+# Visual Studio files
+*.docstates
+*.[Oo]bj
+*.dat
+*.crc
+*.dbmdl
+*.pdb
+*.user
+*.aps
+*.pch
+*.vspscc
+*.vssscc
+*_i.c
+*_p.c
+*.ncb
+*.suo
+*.tlb
+*.tlh
+*.[Cc]ache
+*.ilk
+*.log
+*.lib
+*.sbr
+*.schemaview
+ipch/
+[Oo]bj/
+[Bb]in/*
+[Dd]ebug*/
+[Rr]elease*/
+Ankh.NoLoad
+
+# Vim Editor files
+*.swp
+*.swo
+*.swn
+
+# Office Temp Files
+~$*

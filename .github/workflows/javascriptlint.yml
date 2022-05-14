@@ -1,0 +1,18 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.js'
+
+jobs:
+  javascript-lint:
+    runs-on: ubuntu-latest
+      container: node:alpine
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@main
+        - name: Run Java Script Linter
+          run: |
+            npm install -g eslint
+            eslint --init
+            find . -not -path "*/\.*" -type f -iname "*.js" -exec eslint \{\} \+

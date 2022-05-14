@@ -1,0 +1,19 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.yml'
+      - '**.yaml'
+      - '.**.yml'
+
+jobs:
+  yaml-lint:
+    runs-on: ubuntu-latest
+    container: ruby:alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run Yaml Linter
+        run: |
+          gem install yaml-lint
+          yaml-lint -i ./

@@ -1,0 +1,67 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.tf'
+      - '**.tfvars'
+      - '**.tfvars.json'
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@main
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@main
+        with:
+          cli_config_credentials_token: ${{ secrets.TOKEN_TFC }}
+      - name: Terraform Init
+        run: |
+          cat <<-EOF > ./sensitive.auto.tfvars
+          tfc_token    = "${{ secrets.TOKEN_TFC }}"
+          github_token = "${{ secrets.TOKEN_GITHUB }}"
+          EOF
+          terraform init
+          terraform -version
+      - name: Terraform Plan
+        id: plan
+        if: github.event_name == 'pull_request'
+        run: terraform plan -no-color -input=false
+      - name: Parse TF Plan
+        id: parse
+        if: steps.plan.outcome == 'success'
+        run: |
+          tf_plan='${{ steps.plan.outputs.stdout }}'
+          plan=`(grep 'Plan:' <<< $tf_plan) || ((grep -q "No changes" <<< $tf_plan) && echo "Plan: 0 to add, 0 to change, 0 to destroy" || exit 1)`
+          echo "::set-output name=stdout::$(echo $plan)"
+      - uses: actions/github-script@main
+        if: github.event_name == 'pull_request'
+        env:
+          PLAN: "${{ steps.plan.outputs.stdout }}"
+          PARSE: "${{ steps.parse.outputs.stdout }}"
+        with:
+          github-token: ${{ secrets.TOKEN_GITHUB }}
+          script: |
+            const output = `#### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            #### \`${process.env.PARSE}\`
+
+            <details><summary>Show Plan</summary>
+
+            \`\`\`terraform\n
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>
+
+            *Pushed by: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: output
+            })

@@ -1,0 +1,17 @@
+---
+on:
+  pull_request:
+    paths:
+      - '**.py'
+
+jobs:
+  python-lint:
+    runs-on: ubuntu-latest
+    container: python:alpine
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@main
+      - name: Run Python Lint
+        run: |
+          pip install --no-cache-dir boto boto3 pylint
+          find . -not -path "*/\.*" -type f -iname "*.py" -exec pylint \{\} \+
