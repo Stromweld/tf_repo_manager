@@ -99,24 +99,29 @@ resource "github_branch_protection" "default" {
   require_conversation_resolution = true                           # (Optional) Boolean, setting this to true requires all conversations on code must be resolved before a pull request can be merged.
   required_status_checks {                                         # (Optional) Enforce restrictions for required status checks. See Required Status Checks below for details.
     strict = true                                                  # (Optional) Require branches to be up to date before merging. Defaults to false.
-    #    contexts = distinct(                                           # (Optional) The list of status checks to require in order to merge into this branch. No status checks are required by default.
-    #      compact(
-    #        concat(
-    #          [
-    #            "linting / Lint Code Base (pull_request)",
-    #          ],
-    #          var.cookbook ? [
-    #            "lint / cookstyle",
-    #            "Changelog Validator",
-    #            "Metadata Version Validator",
-    #            "Release Label Validator"
-    #          ] : [],
-    #          var.terraform || var.tf_module ? [
-    #            "terraform / terraform (pull_request)"
-    #          ] : []
-    #        )
-    #      )
-    #    )
+    contexts = distinct(                                           # (Optional) The list of status checks to require in order to merge into this branch. No status checks are required by default.
+      compact(
+        concat(
+          [
+            "markdown-lint",
+            "yaml-lint",
+            "json-lint"
+          ],
+          var.cookbook ? [
+            "cookstyle",
+            "Changelog Validator",
+            "Metadata Version Validator",
+            "Release Label Validator"
+          ] : [],
+          var.terraform || var.tf_module ? [
+            "terraform-lint"
+          ] : [],
+          var.terraform ? [
+            "terraform-plan"
+          ] : []
+        )
+      )
+    )
   }
   required_pull_request_reviews {           # (Optional) Enforce restrictions for pull request reviews. See Required Pull Request Reviews below for details.
     dismiss_stale_reviews           = true  # (Optional) Dismiss approved reviews automatically when a new commit is pushed. Defaults to false.
@@ -124,7 +129,7 @@ resource "github_branch_protection" "default" {
     dismissal_restrictions          = null  # (Optional) The list of actor IDs with dismissal access. If not empty, restrict_dismissals is ignored.
     pull_request_bypassers          = null  # (Optional) The list of actor IDs that are allowed to bypass pull request requirements.
     require_code_owner_reviews      = null  # (Optional) Require an approved review in pull requests including files with a designated code owner. Defaults to false.
-    required_approving_review_count = null  # (Optional) Require x number of approvals to satisfy branch protection requirements. If this is specified it must be a number between 0-6. This requirement matches GitHub's API, see the upstream documentation for more information.
+    required_approving_review_count = 0     # (Optional) Require x number of approvals to satisfy branch protection requirements. If this is specified it must be a number between 0-6. This requirement matches GitHub's API, see the upstream documentation for more information.
   }
   push_restrictions   = null  # (Optional) The list of actor IDs that may push to the branch.
   allows_deletions    = false # (Optional) Boolean, setting this to true to allow the branch to be deleted.
