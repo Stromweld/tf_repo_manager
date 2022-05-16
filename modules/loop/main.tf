@@ -30,10 +30,10 @@ module "tf_workspace" {
 }
 
 module "tf_module" {
-  source   = "../TerraformCloud/registry_module"
-  for_each = var.tf_module ? toset([var.name]) : toset([])
+  source = "../TerraformCloud/registry_module"
+  count  = var.tf_module ? 1 : 0
 
-  vcs_display_identifier = module.repository[each.key].node_id
-  vcs_identifier         = module.repository[each.key].full_name
+  vcs_display_identifier = module.repository.node_id
+  vcs_identifier         = module.repository.full_name
   oauth_token_id         = var.oauth_token_id
 }

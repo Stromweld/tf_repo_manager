@@ -9,18 +9,18 @@ variable "tfc_token" {
   sensitive   = true
 }
 variable "vars_chef_cb_repos" {
-  type        = map(any)
+  type        = any
   description = "The Chef Cookbook repositories to create."
 }
 variable "vars_other_repos" {
-  type        = map(any)
+  type        = any
   description = "The repositories to create."
 }
 variable "vars_tf_module_repos" {
-  type        = map(any)
+  type        = any
   description = "The Terraform Module repositories to create."
 }
 variable "vars_tf_repos" {
-  type        = map(any)
+  type        = any
   description = "The Terraform repositories to create."
 }
