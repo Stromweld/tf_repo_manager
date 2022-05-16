@@ -11,8 +11,8 @@ module "repository" {
   topics                          = try(var.repo_config.topics, [])
   template                        = try(var.repo_config.template, {})
   github_repository_collaborators = try(var.repo_config.github_repository_collaborators, [])
-  github_branch = try(var.repo_config.github_branch, {})
-  github_branch_protection = try(var.repo_config.github_branch_protection, { main = {} })
+  github_branch                   = try(var.repo_config.github_branch, {})
+  github_branch_protection        = try(var.repo_config.github_branch_protection, { main = {} })
   cookbook                        = var.cookbook
   terraform                       = var.terraform
   tf_module                       = var.tf_module
