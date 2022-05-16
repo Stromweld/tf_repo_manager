@@ -1,5 +1,3 @@
-
-
 variable "name" {
   type        = string
   description = "Name of the repository"
@@ -51,6 +49,15 @@ variable "github_repository_collaborators" {
   type        = list(string)
   default     = []
   description = "List of Collaborators to add to repository"
+}
+variable "github_branch" {
+  type        = map(string)
+  default     = {}
+  description = "Map of additional branches to create"
+}
+variable "github_branch_protection" {
+  type    = map(any)
+  default = { main = {} }
 }
 variable "cookbook" {
   type        = bool

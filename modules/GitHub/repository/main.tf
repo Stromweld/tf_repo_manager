@@ -1,5 +1,5 @@
 locals {
-  chef_description      = var.cookbook ? "Development repository for the ${var.name} Chef Cookbook" : ""
+  chef_description      = var.cookbook ? "Development repository for the ${substr(var.name, 5, -1)} Chef Cookbook" : ""
   tf_module_description = var.tf_module ? "Development repository for the ${var.name} Terraform Module" : ""
   terraform_description = var.terraform ? "Configuration repository for the ${var.name} Terraform code" : ""
   description           = var.description == null ? join("", [local.chef_description, local.terraform_description, local.tf_module_description]) : var.description
@@ -20,10 +20,6 @@ locals {
       )
     )
   )
-}
-
-data "github_user" "Stromweld" {
-  username = "Stromweld"
 }
 
 resource "github_repository" "this" {
@@ -71,19 +67,27 @@ resource "github_repository" "this" {
   ignore_vulnerability_alerts_during_read = null # (Optional) - Set to true to not call the vulnerability alerts endpoint so the resource can also be used without admin permissions during read.
 }
 
+data "github_branch" "main" {
+  repository = github_repository.this.name
+  branch     = "main"
+}
+
 resource "github_branch" "this" {
-  repository    = github_repository.this.name # (Required) The GitHub repository name.
-  branch        = "main"                      # (Required) The repository branch to create.
-  source_branch = null                        # (Optional) The branch name to start from. Defaults to main.
-  source_sha    = null                        # (Optional) The commit hash to start from. Defaults to the tip of source_branch. If provided, source_branch is ignored.
+  for_each = var.github_branch
+
+  repository    = github_repository.this.name         # (Required) The GitHub repository name.
+  branch        = each.key                            # (Required) The repository branch to create.
+  source_branch = try(each.value.source_branch, null) # (Optional) The branch name to start from. Defaults to main.
+  source_sha    = try(each.value.source_sha, null)    # (Optional) The commit hash to start from. Defaults to the tip of source_branch. If provided, source_branch is ignored.
 }
 
 resource "github_branch_default" "this" {
-  repository = github_repository.this.name # (Required) The GitHub repository
-  branch     = github_branch.this.branch   # (Required) The branch (e.g. main)
+  repository = github_repository.this.name    # (Required) The GitHub repository
+  branch     = data.github_branch.main.branch # (Required) The branch (e.g. main)
 }
 
 resource "github_branch_protection" "default" {
+  for_each = var.github_branch_protection
   # when a repo is being initialized/created you can run into race conditions
   # by adding an explicit depends we force the repo to be created
   # before it attempts to add branch protection
@@ -91,15 +95,15 @@ resource "github_branch_protection" "default" {
     github_repository.this,
   ]
 
-  repository_id                   = github_repository.this.node_id # (Required) The name or node ID of the repository associated with this branch protection rule.
-  pattern                         = github_branch.this.branch      # (Required) Identifies the protection rule pattern.
-  enforce_admins                  = true                           # (Optional) Boolean, setting this to true enforces status checks for repository administrators.
-  require_signed_commits          = false                          # (Optional) Boolean, setting this to true requires all commits to be signed with GPG.
-  required_linear_history         = false                          # (Optional) Boolean, setting this to true enforces a linear commit Git history, which prevents anyone from pushing merge commits to a branch
-  require_conversation_resolution = true                           # (Optional) Boolean, setting this to true requires all conversations on code must be resolved before a pull request can be merged.
-  required_status_checks {                                         # (Optional) Enforce restrictions for required status checks. See Required Status Checks below for details.
-    strict   = true                                                # (Optional) Require branches to be up to date before merging. Defaults to false.
-    contexts = ["check"]                                           # (Optional) The list of status checks to require in order to merge into this branch. No status checks are required by default.
+  repository_id                   = github_repository.this.node_id                                                            # (Required) The name or node ID of the repository associated with this branch protection rule.
+  pattern                         = each.key == "main" ? data.github_branch.main.branch : github_branch.this[each.key].branch # (Required) Identifies the protection rule pattern.
+  enforce_admins                  = true                                                                                      # (Optional) Boolean, setting this to true enforces status checks for repository administrators.
+  require_signed_commits          = false                                                                                     # (Optional) Boolean, setting this to true requires all commits to be signed with GPG.
+  required_linear_history         = false                                                                                     # (Optional) Boolean, setting this to true enforces a linear commit Git history, which prevents anyone from pushing merge commits to a branch
+  require_conversation_resolution = true                                                                                      # (Optional) Boolean, setting this to true requires all conversations on code must be resolved before a pull request can be merged.
+  required_status_checks {                                                                                                    # (Optional) Enforce restrictions for required status checks. See Required Status Checks below for details.
+    strict   = true                                                                                                           # (Optional) Require branches to be up to date before merging. Defaults to false.
+    contexts = ["check"]                                                                                                      # (Optional) The list of status checks to require in order to merge into this branch. No status checks are required by default.
   }
   required_pull_request_reviews {           # (Optional) Enforce restrictions for pull request reviews. See Required Pull Request Reviews below for details.
     dismiss_stale_reviews           = true  # (Optional) Dismiss approved reviews automatically when a new commit is pushed. Defaults to false.
