@@ -1,0 +1,44 @@
+---
+on:
+  pull_request:
+  push:
+
+jobs:
+  build:
+    ...
+
+  docs:
+    ...
+
+  linters:
+    ...
+
+  package-linters:
+    needs:
+      - build
+    ...
+
+  tests:
+    needs:
+      - build
+    ...
+
+  check:
+    if: always()
+
+    needs:
+      - docs
+      - linters
+      - package-linters
+      - tests
+
+    runs-on: Ubuntu-latest
+
+    steps:
+      - name: Decide whether the needed jobs succeeded or failed
+        uses: re-actors/alls-green@main
+        with:
+          allowed-failures: docs, linters
+          allowed-skips: non-voting-flaky-job
+          jobs: ${{ toJSON(needs) }}
+...
