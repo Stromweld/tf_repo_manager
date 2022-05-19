@@ -13,7 +13,7 @@ resource "tfe_workspace" "workspace" {
   speculative_enabled           = var.speculative_enabled # (Optional) Whether this workspace allows speculative plans. Setting this to false prevents Terraform Cloud or the Terraform Enterprise instance from running plans on pull requests, which can improve security if the VCS repository is public or includes untrusted contributors. Defaults to true.
   structured_run_output_enabled = null                    # (Optional) Whether this workspace should show output from Terraform runs using the enhanced UI when available. Defaults to true. Setting this to false ensures that all runs in this workspace will display their output as text logs.
   ssh_key_id                    = null                    # (Optional) The ID of an SSH key to assign to the workspace.
-  terraform_version             = "1.1.9"                 # (Optional) The version of Terraform to use for this workspace. Defaults to the latest available version.
+  terraform_version             = "1.2.0"                 # (Optional) The version of Terraform to use for this workspace. Defaults to the latest available version.
   trigger_prefixes              = null                    # (Optional) List of repository-root-relative paths which describe all locations to be tracked for changes.
   tag_names                     = null                    # (Optional) A list of tag names for this workspace.
   working_directory             = null                    # (Optional) A relative path that Terraform will execute within. Defaults to the root of your repository.

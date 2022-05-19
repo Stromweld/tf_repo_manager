@@ -10,7 +10,7 @@ terraform {
   backend "remote" {
     organization = "Stromweld"
     workspaces {
-      name = "tf-repo-manager"
+      name = "tf_repo_manager"
     }
   }
 }
