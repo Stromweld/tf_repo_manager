@@ -1,0 +1,14 @@
+---
+on:
+  push:
+    paths:
+      - '**/**.tf'
+      - '**/**.tfvars'
+      - '**/**.tfvars.json'
+    branches:
+      - main
+
+jobs:
+  deployment:
+    uses: Stromweld/github-workflows/.github/workflows/terraform-apply.yml@main
+    secrets: inherit
