@@ -1,44 +1,35 @@
 ---
 on:
   pull_request:
-  push:
 
 jobs:
-  build:
-    ...
+  markdownlint:
+    uses: Stromweld/github-workflows/.github/workflows/markdownlint.yml@main
 
-  docs:
-    ...
+  yamllint:
+    uses: Stromweld/github-workflows/.github/workflows/yamllint.yml@main
 
-  linters:
-    ...
+  terraformlint:
+    uses: Stromweld/github-workflows/.github/workflows/terraform-lint.yml@main
 
-  package-linters:
-    needs:
-      - build
-    ...
-
-  tests:
-    needs:
-      - build
-    ...
+  terraformplan:
+    uses: Stromweld/github-workflows/.github/workflows/terraform-plan.yml@main
 
   check:
     if: always()
-
     needs:
-      - docs
-      - linters
-      - package-linters
-      - tests
-
+      - markdownlint
+      - yamllint
+      - terraformlint
+      - terraformplan
     runs-on: Ubuntu-latest
-
     steps:
       - name: Decide whether the needed jobs succeeded or failed
         uses: re-actors/alls-green@main
         with:
-          allowed-failures: docs, linters
-          allowed-skips: non-voting-flaky-job
+          allowed-failures:
+          allowed-skips:
           jobs: ${{ toJSON(needs) }}
-...
+
+  deployment:
+    uses: Stromweld/github-workflows/.github/workflows/terraform-apply.yml@main

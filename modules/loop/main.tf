@@ -1,5 +1,6 @@
 module "repository" {
-  source = "../GitHub/repository"
+  source  = "app.terraform.io/Stromweld/repositories/github"
+  version = ">= 1.0.0"
 
   name                            = var.name
   description                     = try(var.repo_config.description, null)
@@ -19,7 +20,8 @@ module "repository" {
 }
 
 module "tf_workspace" {
-  source   = "../TerraformCloud/workspaces"
+  source   = "app.terraform.io/Stromweld/workspaces/tfe"
+  version  = ">= 1.0.0"
   for_each = var.tf_workspaces
 
   name                = each.key == "default" ? var.name : "${var.name}:${each.key}"
@@ -32,10 +34,11 @@ module "tf_workspace" {
 }
 
 module "tf_module" {
-  source = "../TerraformCloud/registry_module"
-  count  = var.tf_module ? 1 : 0
+  source  = "app.terraform.io/Stromweld/private-modules/tfe"
+  version = ">= 1.0.0"
+  count   = var.tf_module ? 1 : 0
 
-  vcs_display_identifier = module.repository.node_id
+  vcs_display_identifier = module.repository.full_name
   vcs_identifier         = module.repository.full_name
   oauth_token_id         = var.oauth_token_id
 }
