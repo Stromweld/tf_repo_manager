@@ -1,5 +1,6 @@
 module "repository" {
-  source = "../GitHub/repository"
+  source  = "app.terraform.io/Stromweld/repositories/github"
+  version = ">= 1.0.0"
 
   name                            = var.name
   description                     = try(var.repo_config.description, null)
@@ -11,13 +12,16 @@ module "repository" {
   topics                          = try(var.repo_config.topics, [])
   template                        = try(var.repo_config.template, {})
   github_repository_collaborators = try(var.repo_config.github_repository_collaborators, [])
+  github_branch                   = try(var.repo_config.github_branch, {})
+  github_branch_protection        = try(var.repo_config.github_branch_protection, { main = {} })
   cookbook                        = var.cookbook
   terraform                       = var.terraform
   tf_module                       = var.tf_module
 }
 
 module "tf_workspace" {
-  source   = "../TerraformCloud/workspaces"
+  source   = "app.terraform.io/Stromweld/workspaces/tfe"
+  version  = ">= 1.0.0"
   for_each = var.tf_workspaces
 
   name                = each.key == "default" ? var.name : "${var.name}:${each.key}"
@@ -27,13 +31,15 @@ module "tf_workspace" {
   description         = try(each.value.description, var.repo_config.description, null)
   organization        = try(each.value.organization, "Stromweld")
   speculative_enabled = try(each.value.speculative_enabled, true)
+  terraform_version   = try(each.value.terraform_vesion, "1.2.1")
 }
 
 module "tf_module" {
-  source   = "../TerraformCloud/registry_module"
-  for_each = var.tf_module ? toset([var.name]) : toset([])
+  source  = "app.terraform.io/Stromweld/private-modules/tfe"
+  version = ">= 1.0.0"
+  count   = var.tf_module ? 1 : 0
 
-  vcs_display_identifier = module.repository[each.key].node_id
-  vcs_identifier         = module.repository[each.key].full_name
+  vcs_display_identifier = module.repository.full_name
+  vcs_identifier         = module.repository.full_name
   oauth_token_id         = var.oauth_token_id
 }
