@@ -11,9 +11,11 @@ jobs:
 
   terraformlint:
     uses: Stromweld/github-workflows/.github/workflows/terraform-lint.yml@main
+    secrets: inherit
 
   terraformplan:
     uses: Stromweld/github-workflows/.github/workflows/terraform-plan.yml@main
+    secrets: inherit
 
   check:
     if: always()
@@ -33,3 +35,4 @@ jobs:
 
   deployment:
     uses: Stromweld/github-workflows/.github/workflows/terraform-apply.yml@main
+    secrets: inherit
