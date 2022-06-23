@@ -1,3 +1,8 @@
+locals {
+  cookbook_secrets  = try(var.repo_config.github_actions_secrets, { SUPERMARKET_KEY = { plaintext_value = var.supermarket_key } }, {})
+  terraform_secrets = try(var.repo_config.github_actions_secrets, { TOKEN_TFC = { plaintext_value = var.tfc_token } }, {})
+}
+
 module "repository" {
   source  = "app.terraform.io/Stromweld/repositories/github"
   version = ">= 1.0.0"
@@ -14,6 +19,7 @@ module "repository" {
   github_repository_collaborators = try(var.repo_config.github_repository_collaborators, [])
   github_branch                   = try(var.repo_config.github_branch, {})
   github_branch_protection        = try(var.repo_config.github_branch_protection, { main = {} })
+  github_actions_secrets          = try(var.repo_config.github_actions_secrets, var.cookbook ? local.cookbook_secrets : var.terraform ? local.terraform_secrets : var.tf_module ? local.terraform_secrets : {})
   cookbook                        = var.cookbook
   terraform                       = var.terraform
   tf_module                       = var.tf_module
@@ -31,7 +37,7 @@ module "tf_workspace" {
   description         = try(each.value.description, var.repo_config.description, null)
   organization        = try(each.value.organization, "Stromweld")
   speculative_enabled = try(each.value.speculative_enabled, true)
-  terraform_version   = try(each.value.terraform_vesion, "1.2.1")
+  terraform_version   = try(each.value.terraform_vesion, "1.2.3")
 }
 
 module "tf_module" {

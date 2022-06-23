@@ -18,8 +18,9 @@ resource "tfe_oauth_client" "github" {
 module "chef_cb_repos" {
   source = "./modules"
 
-  github_repos = var.vars_chef_cb_repos
-  cookbook     = true
+  github_repos    = var.vars_chef_cb_repos
+  cookbook        = true
+  supermarket_key = var.supermarket_key
 }
 
 module "other_repos" {
@@ -43,5 +44,21 @@ module "tf_repos" {
   github_repos   = var.vars_tf_repos
   github_token   = var.github_token
   terraform      = true
+  tfc_token      = var.tfc_token
+  oauth_token_id = tfe_oauth_client.github.oauth_token_id
+}
+
+module "tf_repo_manager" {
+  source = "./modules"
+
+  github_repos = {
+    "tf_repo_manager" : {
+      "description" : "Terraform Github Repository Manager",
+      "tf_workspaces" : {
+        "default" : {}
+      }
+    }
+  }
+  github_token   = var.github_token
   oauth_token_id = tfe_oauth_client.github.oauth_token_id
 }
