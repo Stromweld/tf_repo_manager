@@ -13,6 +13,12 @@ variable "tfc_token" {
   description = "Terraform Cloud access token"
   sensitive   = true
 }
+variable "supermarket_key" {
+  type        = string
+  default     = null
+  description = "Chef Supermarket User pem key"
+  sensitive   = true
+}
 variable "github_repos" {
   type        = any
   description = "GitHub repositories to create"
