@@ -1,5 +1,5 @@
 locals {
-  cookbook_secrets  = try(var.repo_config.github_actions_secrets, { SUPERMARKET_KEY = { plaintext_value = var.supermarket_key }, SUPERMARKET_USER = { plaintext_value = "stromweld" }, SUPERMARKET_URL = { plaintext_value = "https://supermarket.chef.io" } }, {})
+  cookbook_secrets  = try(var.repo_config.github_actions_secrets, { SUPERMARKET_KEY = { plaintext_value = var.supermarket_key } }, {})
   terraform_secrets = try(var.repo_config.github_actions_secrets, { TOKEN_TFC = { plaintext_value = var.tfc_token } }, {})
 }
 
