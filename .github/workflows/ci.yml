@@ -32,7 +32,3 @@ jobs:
           allowed-failures:
           allowed-skips:
           jobs: ${{ toJSON(needs) }}
-
-  deployment:
-    uses: Stromweld/github-workflows/.github/workflows/terraform-apply.yml@main
-    secrets: inherit

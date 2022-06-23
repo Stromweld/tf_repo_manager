@@ -6,6 +6,7 @@ module "looper" {
   repo_config    = each.value
   tf_workspaces  = try(each.value.tf_workspaces, {})
   oauth_token_id = var.oauth_token_id
+  tfc_token      = var.tfc_token
   cookbook       = var.cookbook
   terraform      = var.terraform
   tf_module      = var.tf_module

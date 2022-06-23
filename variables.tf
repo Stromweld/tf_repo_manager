@@ -8,6 +8,11 @@ variable "tfc_token" {
   description = "Token to authenticate to TFC"
   sensitive   = true
 }
+variable "supermarket_key" {
+  type        = string
+  description = "Chef Supermarket User Pem Key"
+  sensitive   = true
+}
 variable "vars_chef_cb_repos" {
   type        = any
   description = "The Chef Cookbook repositories to create."

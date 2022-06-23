@@ -18,8 +18,9 @@ resource "tfe_oauth_client" "github" {
 module "chef_cb_repos" {
   source = "./modules"
 
-  github_repos = var.vars_chef_cb_repos
-  cookbook     = true
+  github_repos    = var.vars_chef_cb_repos
+  cookbook        = true
+  supermarket_key = var.supermarket_key
 }
 
 module "other_repos" {

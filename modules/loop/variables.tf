@@ -21,6 +21,18 @@ variable "oauth_token_id" {
   default     = null
   description = "TF VCS oauth token ID"
 }
+variable "supermarket_key" {
+  type        = string
+  default     = null
+  description = "Chef Supermarket User pem key"
+  sensitive   = true
+}
+variable "tfc_token" {
+  type        = string
+  default     = null
+  description = "Terraform Cloud access token"
+  sensitive   = true
+}
 variable "cookbook" {
   type        = bool
   default     = false
