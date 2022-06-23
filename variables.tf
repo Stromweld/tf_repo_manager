@@ -5,11 +5,13 @@ variable "github_token" {
 }
 variable "tfc_token" {
   type        = string
+  default     = null
   description = "Token to authenticate to TFC"
   sensitive   = true
 }
 variable "supermarket_key" {
   type        = string
+  default     = null
   description = "Chef Supermarket User Pem Key"
   sensitive   = true
 }

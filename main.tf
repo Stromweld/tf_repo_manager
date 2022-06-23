@@ -44,5 +44,6 @@ module "tf_repos" {
   github_repos   = var.vars_tf_repos
   github_token   = var.github_token
   terraform      = true
+  tfc_token      = var.tfc_token
   oauth_token_id = tfe_oauth_client.github.oauth_token_id
 }
