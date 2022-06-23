@@ -47,3 +47,18 @@ module "tf_repos" {
   tfc_token      = var.tfc_token
   oauth_token_id = tfe_oauth_client.github.oauth_token_id
 }
+
+module "tf_repo_manager" {
+  source = "./modules"
+
+  github_repos = {
+    "tf_repo_manager" : {
+      "description" : "Terraform Github Repository Manager",
+      "tf_workspaces" : {
+        "default" : {}
+      }
+    }
+  }
+  github_token   = var.github_token
+  oauth_token_id = tfe_oauth_client.github.oauth_token_id
+}
