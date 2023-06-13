@@ -4,10 +4,10 @@ on:
 
 jobs:
   markdownlint:
-    uses: Stromweld/github-workflows/.github/workflows/markdownlint.yml@main
+    uses: Stromweld/github-workflows/.github/workflows/markdown-lint.yml@main
 
   yamllint:
-    uses: Stromweld/github-workflows/.github/workflows/yamllint.yml@main
+    uses: Stromweld/github-workflows/.github/workflows/yaml-lint.yml@main
 
   terraformlint:
     uses: Stromweld/github-workflows/.github/workflows/terraform-lint.yml@main
