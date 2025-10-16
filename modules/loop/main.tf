@@ -32,8 +32,6 @@ module "tf_workspace" {
 
   name                = each.key == "default" ? var.name : "${var.name}:${each.key}"
   vcs_repo            = try(each.value.vcs_repo, { enabled = false })
-  repo_identifier     = module.repository.node_id
-  oauth_token_id      = var.oauth_token_id
   description         = try(each.value.description, var.repo_config.description, null)
   organization        = try(each.value.organization, "Stromweld")
   speculative_enabled = try(each.value.speculative_enabled, true)

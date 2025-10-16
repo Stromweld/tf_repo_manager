@@ -2,11 +2,11 @@ vars_chef_cb_repos = {
   chef-360 = {
     visibility = "private"
   }
-  chef_artifactory_ii =  {}
-  chef_autopatch_ii = {}
-  chef_collectd_ii = {}
+  chef_artifactory_ii      = {}
+  chef_autopatch_ii        = {}
+  chef_collectd_ii         = {}
   chef_certificates_config = {}
-  chef_automate_ha = {}
+  chef_automate_ha         = {}
   chef_base_config = {
     visibility = "private"
   }
