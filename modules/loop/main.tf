@@ -35,7 +35,7 @@ module "tf_workspace" {
   description         = try(each.value.description, var.repo_config.description, null)
   organization        = try(each.value.organization, "Stromweld")
   speculative_enabled = try(each.value.speculative_enabled, true)
-  terraform_version   = try(each.value.terraform_vesion, "1.5.0")
+  terraform_version   = try(each.value.terraform_vesion, "latest")
 }
 
 module "tf_module" {
