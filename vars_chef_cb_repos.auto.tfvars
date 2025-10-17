@@ -15,8 +15,8 @@ vars_chef_cb_repos = {
   chef_automate_ha = {
     visibility = "public"
   }
-  chef_base_config            = {}
-  chef_chef_software          = {
+  chef_base_config = {}
+  chef_chef_software = {
     visibility = "public"
   }
   chef_nginx_webserver_config = {}
