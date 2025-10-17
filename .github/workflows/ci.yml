@@ -3,31 +3,31 @@ on:
   pull_request:
 
 jobs:
-  markdownlint:
+  markdown-lint:
     uses: Stromweld/github-workflows/.github/workflows/markdown-lint.yml@main
 
-  yamllint:
+  yaml-lint:
     uses: Stromweld/github-workflows/.github/workflows/yaml-lint.yml@main
 
-  terraformlint:
+  terraform-lint:
     uses: Stromweld/github-workflows/.github/workflows/terraform-lint.yml@main
     secrets: inherit
 
-  terraformplan:
+  terraform-plan:
     uses: Stromweld/github-workflows/.github/workflows/terraform-plan.yml@main
     secrets: inherit
 
   check:
     if: always()
     needs:
-      - markdownlint
-      - yamllint
-      - terraformlint
-      - terraformplan
+      - markdown-lint
+      - yaml-lint
+      - terraform-lint
+      - terraform-plan
     runs-on: Ubuntu-latest
     steps:
       - name: Decide whether the needed jobs succeeded or failed
-        uses: re-actors/alls-green@main
+        uses: re-actors/alls-green@release/v1
         with:
           allowed-failures:
           allowed-skips:
