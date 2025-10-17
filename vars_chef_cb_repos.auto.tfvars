@@ -37,6 +37,5 @@ vars_chef_cb_repos = {
     github_repository_collaborators = [
       "limitusus"
     ]
-    github_branch_protection = {}
   }
 }
