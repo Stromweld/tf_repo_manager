@@ -57,6 +57,7 @@ module "tf_repo_manager" {
       "tf_workspaces" : {
         "default" : {}
       }
+      visibility = "public"
     }
   }
   github_token   = var.github_token
