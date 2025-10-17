@@ -16,7 +16,9 @@ vars_chef_cb_repos = {
     visibility = "public"
   }
   chef_base_config            = {}
-  chef_chef_software          = {}
+  chef_chef_software          = {
+    visibility = "public"
+  }
   chef_nginx_webserver_config = {}
   chef_automate_role          = {}
   chef_base_role              = {}
@@ -29,5 +31,6 @@ vars_chef_cb_repos = {
     github_repository_collaborators = [
       "limitusus"
     ]
+    visibility = "public"
   }
 }
